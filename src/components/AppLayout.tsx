@@ -1,44 +1,19 @@
-import React, { useState } from 'react';
-import BottomNav from './BottomNav';
-import InstallPrompt from './InstallPrompt';
-import Home from '../pages/Home';
-import ConversionsGuide from '../pages/ConversionsGuide';
-import Calculator from '../pages/Calculator';
-import Printables from '../pages/Printables';
-import FAQ from '../pages/FAQ';
-import About from '../pages/About';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import BottomNav from "./BottomNav";
+import InstallPrompt from "./InstallPrompt";
 
-
-const AppLayout: React.FC = () => {
-  const [activePage, setActivePage] = useState('home');
-
-  const renderPage = () => {
-    switch (activePage) {
-      case 'home':
-        return <Home onNavigate={setActivePage} />;
-      case 'guide':
-        return <ConversionsGuide />;
-      case 'calculator':
-        return <Calculator />;
-      case 'printables':
-        return <Printables />;
-      case 'faq':
-        return <FAQ />;
-      case 'about':
-        return <About />;
-      default:
-        return <Home onNavigate={setActivePage} />;
-    }
-  };
-
+export default function AppLayout() {
   return (
     <div className="min-h-screen bg-[#f5f1ed]">
-      {renderPage()}
+      {/* This is where routed pages will appear */}
+      <Outlet />
+
+      {/* Install PWA prompt */}
       <InstallPrompt />
-      <BottomNav active={activePage} onNavigate={setActivePage} />
+
+      {/* Bottom navigation uses URLs instead of internal state */}
+      <BottomNav />
     </div>
   );
-
-};
-
-export default AppLayout;
+}
