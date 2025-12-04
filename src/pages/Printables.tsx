@@ -44,14 +44,15 @@ export default function Printables() {
 
           <FloralDivider variant="mushroom" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {files.map((f, idx) => (
               <DecorativeFrame key={idx}>
                 <div className="parchment-card p-4 flex flex-col items-center">
                   <img
                     src={f.img}
                     alt={f.title}
-                    className="w-full rounded-xl shadow-lg mb-4"
+                    className="w-32 h-32 object-cover rounded-xl shadow-md mb-3 mx-auto"
+
                   />
 
                   <h2 className="text-xl font-bold text-[#1b302c] mb-2">

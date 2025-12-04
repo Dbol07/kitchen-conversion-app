@@ -80,20 +80,20 @@ export default function Dashboard() {
 
           {/* HEADER */}
           <header className="flex flex-col items-center text-center mb-10 mt-4">
-            <img
-              src={DashboardIcon}
-              alt="The Conversion Kitchen"
-              className="drop-shadow-lg w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 mb-3"
-            />
+  <img
+    src={DashboardIcon}
+    alt="The Conversion Kitchen"
+    className="drop-shadow-lg w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 object-contain"
+  />
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg">
-              The Conversion Kitchen
-            </h1>
+  <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg mt-2">
+    The Conversion Kitchen
+  </h1>
+  <p className="text-white/85 text-sm sm:text-base mt-1">
+    Your cozy hub for all things kitchen math
+  </p>
+</header>
 
-            <p className="text-white/85 text-sm sm:text-base mt-1">
-              Your cozy hub for all things kitchen math
-            </p>
-          </header>
 
           <FloralDivider variant="vine" />
 
@@ -142,49 +142,48 @@ export default function Dashboard() {
             </div>
           </DecorativeFrame>
 
-          <FloralDivider variant="vine" />
+         {/* ---------------------------------------------------- */}
+{/* RECENT CONVERSIONS (Placeholder) */}
+{/* ---------------------------------------------------- */}
 
-          {/* RECIPE PREVIEW */}
-          <FloralDivider variant="mushroom" />
+<FloralDivider variant="vine" />
 
-          <DecorativeFrame className="mt-6 mb-10">
-            <div
-              className="parchment-card p-6 cursor-pointer hover:bg-[#b8d3d5]/30 transition-all rounded-xl"
-              onClick={() => navigate("/recipes")}
-            >
-              <h2 className="text-xl font-bold text-[#1b302c] mb-2">
-                Cozy Recipe Inspiration
-              </h2>
+<DecorativeFrame className="mt-6">
+  <div className="parchment-card p-6">
+    <h2 className="text-xl font-bold text-[#1b302c] mb-3">Recent Conversions</h2>
+    <p className="text-[#5f3c43] text-sm mb-2">
+      Soon this will show your latest conversions from the Calculator.
+    </p>
+    <p className="italic text-[#5f3c43]">
+      No saved history yet — try a few conversions and we’ll hook this up next.
+    </p>
+  </div>
+</DecorativeFrame>
 
-              <p className="text-[#5f3c43] text-sm mb-4">
-                A little nudge for your next kitchen adventure.
-              </p>
+{/* ---------------------------------------------------- */}
+{/* RECIPE INSPIRATION — STATIC (NO API CALLS) */}
+{/* ---------------------------------------------------- */}
 
-              {loadingPreview && (
-                <p className="text-[#5f3c43] italic">Loading recipe…</p>
-              )}
+<FloralDivider variant="mushroom" />
 
-              {preview && (
-                <div className="bg-[#b8d3d5]/40 p-4 rounded-xl shadow-inner">
-                  <img
-                    src={preview.image}
-                    alt={preview.title}
-                    className="rounded-xl shadow-md mb-2"
-                  />
+<DecorativeFrame className="mt-6 mb-10">
+  <div
+    className="parchment-card p-6 rounded-xl"
+    onClick={() => navigate("/recipes")}
+  >
+    <h2 className="text-xl font-bold text-[#1b302c] mb-2">
+      Cozy Recipe Inspiration
+    </h2>
 
-                  <h3 className="text-lg font-semibold text-[#1b302c] mb-1">
-                    {preview.title}
-                  </h3>
+    <p className="text-[#5f3c43] text-sm mb-4">
+      Explore curated recipes inside the Recipes tab — no API calls unless you search!
+    </p>
 
-                  <p className="text-[#5f3c43] text-sm">
-                    Tap to explore more cozy recipes
-                  </p>
-                </div>
-              )}
-            </div>
-          </DecorativeFrame>
-        </div>
-      </div>
+    <div className="bg-[#b8d3d5]/40 p-4 rounded-xl shadow-inner text-center">
+      <p className="text-[#1b302c] font-semibold">
+        Tap to browse recipes →
+      </p>
     </div>
-  );
-}
+  </div>
+</DecorativeFrame>
+
