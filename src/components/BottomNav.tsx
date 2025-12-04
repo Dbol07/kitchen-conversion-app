@@ -1,4 +1,11 @@
-import React from 'react';
+import React from "react";
+
+import HomeIcon from "../assets/icons/nav/nav-home.png";
+import CalculatorIcon from "../assets/icons/nav/nav-calculator.png";
+import GuideIcon from "../assets/icons/nav/nav-guide.png";
+import PrintablesIcon from "../assets/icons/nav/nav-printables.png";
+import FAQIcon from "../assets/icons/nav/nav-faq.png";
+import AboutIcon from "../assets/icons/nav/nav-about.png";
 
 interface NavProps {
   active: string;
@@ -6,22 +13,22 @@ interface NavProps {
 }
 
 const NAV_ICONS = {
-  home: 'https://raw.githubusercontent.com/Dbol07/kitchen-conversion-app/main/assets/icons/nav/nav-home.png',
-  guide: 'https://raw.githubusercontent.com/Dbol07/kitchen-conversion-app/main/assets/icons/nav/nav-guide.png',
-  calculator: 'https://raw.githubusercontent.com/Dbol07/kitchen-conversion-app/main/assets/icons/nav/nav-calculator.png',
-  printables: 'https://raw.githubusercontent.com/Dbol07/kitchen-conversion-app/main/assets/icons/nav/nav-printables.png',
-  faq: 'https://raw.githubusercontent.com/Dbol07/kitchen-conversion-app/main/assets/icons/nav/nav-faq.png',
-  about: 'https://raw.githubusercontent.com/Dbol07/kitchen-conversion-app/main/assets/icons/nav/nav-about.png',
+  home: HomeIcon,
+  calculator: CalculatorIcon,
+  guide: GuideIcon,
+  printables: PrintablesIcon,
+  faq: FAQIcon,
+  about: AboutIcon,
 };
 
 export default function BottomNav({ active, onNavigate }: NavProps) {
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'guide', label: 'Guide' },
-    { id: 'calculator', label: 'Calc' },
-    { id: 'printables', label: 'Print' },
-    { id: 'faq', label: 'FAQ' },
-    { id: 'about', label: 'About' },
+    { id: "home", label: "Home" },
+    { id: "guide", label: "Guide" },
+    { id: "calculator", label: "Calc" },
+    { id: "printables", label: "Print" },
+    { id: "faq", label: "FAQ" },
+    { id: "about", label: "About" },
   ];
 
   return (
@@ -33,17 +40,25 @@ export default function BottomNav({ active, onNavigate }: NavProps) {
               key={id}
               onClick={() => onNavigate(id)}
               className={`flex flex-col items-center gap-1 px-2 py-2 rounded-xl transition-all duration-300 ${
-                active === id 
-                  ? 'scale-110 bg-[#b8d3d5]/30' 
-                  : 'hover:bg-[#b8d3d5]/20'
+                active === id
+                  ? "scale-110 bg-[#b8d3d5]/30"
+                  : "hover:bg-[#b8d3d5]/20"
               }`}
             >
-              <img 
-                src={NAV_ICONS[id as keyof typeof NAV_ICONS]} 
+              <img
+                src={NAV_ICONS[id as keyof typeof NAV_ICONS]}
                 alt={label}
-                className={`w-6 h-6 transition-all ${active === id ? 'opacity-100' : 'opacity-70'}`}
+                className={`w-6 h-6 transition-all ${
+                  active === id ? "opacity-100" : "opacity-70"
+                }`}
               />
-              <span className={`text-xs font-medium ${active === id ? 'text-[#3c6150]' : 'text-[#5f3c43]'}`}>{label}</span>
+              <span
+                className={`text-xs font-medium ${
+                  active === id ? "text-[#3c6150]" : "text-[#5f3c43]"
+                }`}
+              >
+                {label}
+              </span>
             </button>
           ))}
         </div>
