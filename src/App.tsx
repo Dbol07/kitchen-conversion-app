@@ -9,7 +9,6 @@ import AppLayout from "./components/AppLayout";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
-import Home from "./pages/Home";
 import ConversionsGuide from "./pages/ConversionsGuide";
 import Calculator from "./pages/Calculator";
 import Printables from "./pages/Printables";
@@ -29,7 +28,6 @@ const App = () => (
           <AppLayout>
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/home" element={<Home />} />
               <Route path="/guide" element={<ConversionsGuide />} />
               <Route path="/calculator" element={<Calculator />} />
               <Route path="/printables" element={<Printables />} />
