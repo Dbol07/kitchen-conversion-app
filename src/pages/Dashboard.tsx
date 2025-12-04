@@ -12,10 +12,12 @@ import IconFAQ from "../assets/icons/nav/nav-faq.png";
 
 import { Link, useNavigate } from "react-router-dom";
 
+const API_KEY = import.meta.env.VITE_SPOONACULAR_KEY;
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // ---- Featured Recipe Picker --------------------------------------------
+  // ---- LOCAL FEATURED RECIPE ----
   const recipes = useMemo(
     () => [
       {
@@ -43,6 +45,31 @@ export default function Dashboard() {
     return recipes[idx];
   }, [recipes]);
 
+  // ---- SPOONACULAR PREVIEW ----
+  const [preview, setPreview] = useState<any>(null);
+  const [loadingPreview, setLoadingPreview] = useState(true);
+
+  useEffect(() => {
+    async function loadPreview() {
+      try {
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/random?number=1&apiKey=${API_KEY}`
+        );
+        const data = await res.json();
+        setPreview(data.recipes?.[0] || null);
+      } catch (err) {
+        console.error("Failed to load recipe preview:", err);
+      }
+      setLoadingPreview(false);
+    }
+
+    loadPreview();
+  }, []);
+
+  // --------------------------------------------------------------------
+  //  UI SECTION
+  // --------------------------------------------------------------------
+
   return (
     <div
       className="min-h-screen pb-28 page-transition page-bg"
@@ -51,21 +78,12 @@ export default function Dashboard() {
       <div className="bg-[#1b302c]/30 min-h-screen px-4 py-8">
         <div className="max-w-4xl mx-auto">
 
-          {/* ---------------------------------------------------- */}
-          {/* BEAUTIFUL CENTERED HEADER */}
-          {/* ---------------------------------------------------- */}
-
+          {/* HEADER */}
           <header className="flex flex-col items-center text-center mb-10 mt-4">
             <img
               src={DashboardIcon}
               alt="The Conversion Kitchen"
-              className="
-                drop-shadow-lg
-                w-12 h-12
-                sm:w-16 sm:h-16
-                lg:w-20 lg:h-20
-                mb-3
-              "
+              className="drop-shadow-lg w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 mb-3"
             />
 
             <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg">
@@ -79,10 +97,7 @@ export default function Dashboard() {
 
           <FloralDivider variant="vine" />
 
-          {/* ---------------------------------------------------- */}
           {/* QUICK TOOLS */}
-          {/* ---------------------------------------------------- */}
-
           <DecorativeFrame className="mt-6">
             <div className="parchment-card p-6">
               <h2 className="text-xl font-bold text-[#1b302c] mb-3 text-center">
@@ -93,134 +108,81 @@ export default function Dashboard() {
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Link
-                  to="/calculator"
-                  className="flex flex-col items-center bg-[#b8d3d5]/20 hover:bg-[#b8d3d5]/40 p-4 rounded-xl transition-all shadow-md"
-                >
+                <Link to="/calculator" className="tool-btn">
                   <img src={IconCalc} className="w-10 h-10 mb-2" />
-                  <span className="text-sm font-semibold text-[#1b302c]">Calculator</span>
+                  <span>Calculator</span>
                 </Link>
 
-                <Link
-                  to="/guide"
-                  className="flex flex-col items-center bg-[#b8d3d5]/20 hover:bg-[#b8d3d5]/40 p-4 rounded-xl transition-all shadow-md"
-                >
+                <Link to="/guide" className="tool-btn">
                   <img src={IconGuide} className="w-10 h-10 mb-2" />
-                  <span className="text-sm font-semibold text-[#1b302c]">Guide</span>
+                  <span>Guide</span>
                 </Link>
 
-                <Link
-                  to="/printables"
-                  className="flex flex-col items-center bg-[#b8d3d5]/20 hover:bg-[#b8d3d5]/40 p-4 rounded-xl transition-all shadow-md"
-                >
+                <Link to="/printables" className="tool-btn">
                   <img src={IconPrint} className="w-10 h-10 mb-2" />
-                  <span className="text-sm font-semibold text-[#1b302c]">Printables</span>
+                  <span>Printables</span>
                 </Link>
-<Link
-  to="/recipes"
-  className="flex flex-col items-center bg-[#b8d3d5]/20 hover:bg-[#b8d3d5]/40 p-4 rounded-xl transition-all shadow-md"
->
-  <img src="https://img.icons8.com/color/96/meal.png" className="w-10 h-10 mb-2" />
-  <span className="text-sm font-semibold text-[#1b302c]">Recipes</span>
-</Link>
 
                 <Link
-                  to="/faq"
+                  to="/recipes"
                   className="flex flex-col items-center bg-[#b8d3d5]/20 hover:bg-[#b8d3d5]/40 p-4 rounded-xl transition-all shadow-md"
                 >
+                  <img
+                    src="https://img.icons8.com/color/96/meal.png"
+                    className="w-10 h-10 mb-2"
+                  />
+                  <span className="text-sm font-semibold text-[#1b302c]">Recipes</span>
+                </Link>
+
+                <Link to="/faq" className="tool-btn">
                   <img src={IconFAQ} className="w-10 h-10 mb-2" />
-                  <span className="text-sm font-semibold text-[#1b302c]">FAQ</span>
+                  <span>FAQ</span>
                 </Link>
               </div>
             </div>
           </DecorativeFrame>
 
-          {/* ---------------------------------------------------- */}
-          {/* RECENT CONVERSIONS (Placeholder) */}
-          {/* ---------------------------------------------------- */}
-
           <FloralDivider variant="vine" />
 
-          <DecorativeFrame className="mt-6">
-            <div className="parchment-card p-6">
-              <h2 className="text-xl font-bold text-[#1b302c] mb-3">Recent Conversions</h2>
-              <p className="text-[#5f3c43] text-sm mb-2">
-                Soon this will show your latest conversions from the Calculator.
+          {/* RECIPE PREVIEW */}
+          <FloralDivider variant="mushroom" />
+
+          <DecorativeFrame className="mt-6 mb-10">
+            <div
+              className="parchment-card p-6 cursor-pointer hover:bg-[#b8d3d5]/30 transition-all rounded-xl"
+              onClick={() => navigate("/recipes")}
+            >
+              <h2 className="text-xl font-bold text-[#1b302c] mb-2">
+                Cozy Recipe Inspiration
+              </h2>
+
+              <p className="text-[#5f3c43] text-sm mb-4">
+                A little nudge for your next kitchen adventure.
               </p>
 
-              <p className="italic text-[#5f3c43]">
-                No saved history yet — try a few conversions and we’ll hook this up next.
-              </p>
+              {loadingPreview && (
+                <p className="text-[#5f3c43] italic">Loading recipe…</p>
+              )}
+
+              {preview && (
+                <div className="bg-[#b8d3d5]/40 p-4 rounded-xl shadow-inner">
+                  <img
+                    src={preview.image}
+                    alt={preview.title}
+                    className="rounded-xl shadow-md mb-2"
+                  />
+
+                  <h3 className="text-lg font-semibold text-[#1b302c] mb-1">
+                    {preview.title}
+                  </h3>
+
+                  <p className="text-[#5f3c43] text-sm">
+                    Tap to explore more cozy recipes
+                  </p>
+                </div>
+              )}
             </div>
           </DecorativeFrame>
-
-{/* ---------------------------------------------------- */}
-{/* RECIPE INSPIRATION — SPOONACULAR PREVIEW */}
-{/* ---------------------------------------------------- */}
-
-import { useEffect } from "react";
-
-const API_KEY = import.meta.env.VITE_SPOONACULAR_KEY;
-
-const [preview, setPreview] = useState<any>(null);
-const [loadingPreview, setLoadingPreview] = useState(true);
-
-useEffect(() => {
-  async function loadPreview() {
-    try {
-      const res = await fetch(
-        `https://api.spoonacular.com/recipes/random?number=1&apiKey=${API_KEY}`
-      );
-      const data = await res.json();
-      setPreview(data.recipes?.[0] || null);
-    } catch (err) {
-      console.error("Failed to load recipe preview:", err);
-    }
-    setLoadingPreview(false);
-  }
-
-  loadPreview();
-}, []);
-
-<FloralDivider variant="mushroom" />
-
-<DecorativeFrame className="mt-6 mb-10">
-  <div
-    className="parchment-card p-6 cursor-pointer hover:bg-[#b8d3d5]/30 transition-all rounded-xl"
-    onClick={() => navigate("/recipes")}
-  >
-    <h2 className="text-xl font-bold text-[#1b302c] mb-2">
-      Cozy Recipe Inspiration
-    </h2>
-
-    <p className="text-[#5f3c43] text-sm mb-4">
-      A little nudge for your next kitchen adventure.
-    </p>
-
-    {loadingPreview && (
-      <p className="text-[#5f3c43] italic">Loading recipe…</p>
-    )}
-
-    {preview && (
-      <div className="bg-[#b8d3d5]/40 p-4 rounded-xl shadow-inner">
-        <img
-          src={preview.image}
-          alt={preview.title}
-          className="rounded-xl shadow-md mb-2"
-        />
-
-        <h3 className="text-lg font-semibold text-[#1b302c] mb-1">
-          {preview.title}
-        </h3>
-
-        <p className="text-[#5f3c43] text-sm">
-          Tap to explore more cozy recipes
-        </p>
-      </div>
-    )}
-  </div>
-</DecorativeFrame>
-
         </div>
       </div>
     </div>
