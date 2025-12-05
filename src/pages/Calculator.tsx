@@ -1,5 +1,5 @@
 import PageDivider from "@/components/PageDivider";
-import getDividerForPage from "@/lib/dividers";
+import { getDividerForPage } from "@/lib/dividers";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { convertLocally } from "@/lib/unitConversion";
