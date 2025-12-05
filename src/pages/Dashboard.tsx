@@ -1,18 +1,40 @@
 import { Link } from "react-router-dom";
+
+// BANNERS
+import dashboardBanner from "@/assets/banners/dashboard-banner.png";
+
+// TEMPLATE THUMBS
 import cookieThumb from "@/assets/templates/cookie-template-thumb.png";
 import cakeThumb from "@/assets/templates/cake-template-thumb.png";
 import breadThumb from "@/assets/templates/bread-template-thumb.png";
 
+// OPTIONAL: If you have a divider image, import here
+// import divider from "@/assets/dividers/vine-divider.png";
 
 export default function Dashboard() {
   return (
-    <div className="dashboard-page p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">
+    <div className="dashboard-page max-w-5xl mx-auto pb-12">
+
+      {/* 🧵 BANNER */}
+      <div className="w-full mb-6">
+        <img
+          src={dashboardBanner}
+          alt="Dashboard Banner"
+          className="w-full rounded-lg shadow-md"
+        />
+      </div>
+
+      {/* 🪄 TITLE */}
+      <h1 className="text-4xl font-bold mb-4 text-center text-[#4b3b2f] drop-shadow">
         The Conversion Kitchen
       </h1>
 
-      {/* QUICK TOOLS (Recipes stays here!) */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
+      {/* 🌿 DIVIDER (optional)
+      <img src={divider} className="w-full my-4 opacity-80" /> 
+      */}
+
+      {/* QUICK TOOLS */}
+      <div className="grid grid-cols-3 gap-4 mb-10 px-4">
         <Link to="/calculator" className="tool-btn">Calculator</Link>
         <Link to="/guide" className="tool-btn">Guide</Link>
         <Link to="/recipes" className="tool-btn">Recipes</Link>
@@ -21,9 +43,13 @@ export default function Dashboard() {
         <Link to="/faq" className="tool-btn">FAQ</Link>
       </div>
 
-      {/* COZY INSPIRATION BOX — recipes removed, templates added */}
-      <div className="bg-white/80 p-6 rounded-xl shadow-md border">
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+      {/* 🌿 DIVIDER (optional)
+      <img src={divider} className="w-full my-4 opacity-80" /> 
+      */}
+
+      {/* ✨ COZY INSPIRATION BOX */}
+      <div className="bg-white/85 backdrop-blur p-6 rounded-2xl shadow-lg border mx-4">
+        <h2 className="text-2xl font-semibold mb-2 text-center text-[#4b3b2f]">
           Cozy Recipe Inspiration
         </h2>
 
@@ -31,12 +57,13 @@ export default function Dashboard() {
           Start cooking with one of our beginner-friendly templates.
         </p>
 
-        {/* TEMPLATE THUMBNAIL GRID */}
+        {/* TEMPLATE THUMBNAILS → now open full preview page */}
         <div className="grid grid-cols-3 gap-6">
+
           {/* COOKIE TEMPLATE */}
           <Link
-            to="/calculator?template=cookie"
-            className="template-card flex flex-col items-center"
+            to="/template/cookie"
+            className="template-card flex flex-col items-center hover:scale-[1.02] transition-transform"
           >
             <img
               src={cookieThumb}
@@ -48,8 +75,8 @@ export default function Dashboard() {
 
           {/* CAKE TEMPLATE */}
           <Link
-            to="/calculator?template=cake"
-            className="template-card flex flex-col items-center"
+            to="/template/cake"
+            className="template-card flex flex-col items-center hover:scale-[1.02] transition-transform"
           >
             <img
               src={cakeThumb}
@@ -61,8 +88,8 @@ export default function Dashboard() {
 
           {/* BREAD TEMPLATE */}
           <Link
-            to="/calculator?template=bread"
-            className="template-card flex flex-col items-center"
+            to="/template/bread"
+            className="template-card flex flex-col items-center hover:scale-[1.02] transition-transform"
           >
             <img
               src={breadThumb}
@@ -71,13 +98,12 @@ export default function Dashboard() {
             />
             <p className="mt-2 text-lg font-medium">Bread</p>
           </Link>
+
         </div>
       </div>
 
-      {/* (Optional) your bottom navigation bar */}
-      <div className="bottom-nav mt-10">
-        {/* reuse your existing footer/nav here */}
-      </div>
+      {/* BOTTOM NAV SPACER */}
+      <div className="h-10"></div>
     </div>
   );
 }

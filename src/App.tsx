@@ -17,8 +17,8 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Recipes from "./pages/Recipes";
 import RecipeDetails from "./pages/RecipeDetails";
-
-
+import RecipeConvertPreview from "./pages/RecipeConvertPreview";
+import TemplatePreview from "./pages/TemplatePreview";
 
 const queryClient = new QueryClient();
 
@@ -28,24 +28,40 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+
         <BrowserRouter>
           <Routes>
             <Route element={<AppLayout />}>
+              {/* HOME */}
               <Route path="/" element={<Dashboard />} />
+
+              {/* GUIDE */}
               <Route path="/guide" element={<ConversionsGuide />} />
+
+              {/* RECIPES */}
+              <Route path="/recipes" element={<Recipes />} />
+              <Route path="/recipes/:id" element={<RecipeDetails />} />
+              <Route path="/recipes/:id/convert" element={<RecipeConvertPreview />} />
+
+              {/* CALCULATOR */}
               <Route path="/calculator" element={<Calculator />} />
+
+              {/* PRINTABLES */}
               <Route path="/printables" element={<Printables />} />
+
+              {/* INFO */}
               <Route path="/faq" element={<FAQ />} />
               <Route path="/about" element={<About />} />
-		<Route path="/recipes" element={<Recipes />} />
-		<Route path="/recipes/:id" element={<RecipeDetails />} />
 
-
+              {/* TEMPLATE PREVIEW */}
+              <Route path="/template/:name" element={<TemplatePreview />} />
             </Route>
 
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { convertLocally } from "@/lib/unitConversion";
+import calculatorBanner from "@/assets/banners/calculator-banner.png";
 
-// Auto-import all template JSON files
-const templates = import.meta.glob("/src/templates/*.json", {
+// Auto-import template JSON files
+const templates = import.meta.glob("/src/assets/templates/*-template.json", {
   eager: true,
   import: "default",
 }) as Record<string, any>;
@@ -20,23 +21,21 @@ export default function CalculatorPage() {
   const [loading, setLoading] = useState(false);
 
   /* ----------------------------------------------------
-     1. TEMPLATE AUTO-LOADING
+     1. TEMPLATE AUTO-LOAD (from TemplatePreview → Calculator)
   ---------------------------------------------------- */
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const templateName = params.get("template");
-    if (!templateName) return;
+    const name = params.get("template");
+    if (!name) return;
 
-    // Find template file by name
     const match = Object.entries(templates).find(([path]) =>
-      path.toLowerCase().includes(templateName.toLowerCase())
+      path.toLowerCase().includes(`${name}-template.json`)
     );
 
     if (!match) return;
 
     const template = match[1];
 
-    // Pre-fill calculator fields using the template data
     if (template.amount) setAmount(String(template.amount));
     if (template.fromUnit) setFromUnit(template.fromUnit);
     if (template.toUnit) setToUnit(template.toUnit);
@@ -47,7 +46,7 @@ export default function CalculatorPage() {
   }, [location.search]);
 
   /* ----------------------------------------------------
-     2. SMART HYBRID CONVERSION (local → Wolfram)
+     2. SMART HYBRID CONVERSION (Local → Wolfram)
   ---------------------------------------------------- */
   async function smartConvert() {
     setLoading(true);
@@ -55,7 +54,7 @@ export default function CalculatorPage() {
     setResult(null);
 
     try {
-      // Local conversion only if no ingredient
+      // LOCAL conversion when ingredient is empty
       if (!ingredient) {
         const local = convertLocally(amount, fromUnit, toUnit);
         if (local.ok) {
@@ -66,16 +65,8 @@ export default function CalculatorPage() {
         }
       }
 
-      // Otherwise → Wolfram
-      const queryParts = [
-        amount,
-        ingredient ? ingredient.trim() : "",
-        fromUnit,
-        "to",
-        toUnit,
-      ].filter(Boolean);
-
-      const query = queryParts.join(" ");
+      // Wolfram Alpha fallback — improved natural language query
+      const query = `convert ${amount} ${ingredient || ""} from ${fromUnit} to ${toUnit}`.trim();
 
       const response = await fetch("/api/wolfram", {
         method: "POST",
@@ -85,7 +76,7 @@ export default function CalculatorPage() {
 
       const data = await response.json();
 
-      if (!response.ok || !data.ok) {
+      if (!data.ok || !response.ok) {
         throw new Error(data.error || "Conversion failed");
       }
 
@@ -99,107 +90,137 @@ export default function CalculatorPage() {
   }
 
   /* ----------------------------------------------------
-     3. UI
+     3. COPY RESULT
+  ---------------------------------------------------- */
+  function copyResult() {
+    if (!result) return;
+    navigator.clipboard.writeText(result);
+  }
+
+  /* ----------------------------------------------------
+     4. UI — Cottagecore Style
   ---------------------------------------------------- */
   return (
-    <div className="calculator-page-container p-6 max-w-xl mx-auto text-center">
-      <h1 className="text-3xl font-bold mb-4">Kitchen Conversion Calculator</h1>
+    <div className="calculator-page max-w-3xl mx-auto px-4 pb-16">
 
-      {/* AMOUNT */}
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">Amount</label>
-        <input
-          type="text"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="e.g. 1 1/2"
-          className="w-full p-2 border rounded"
+      {/* ⭐ BANNER */}
+      <div className="w-full mb-6">
+        <img
+          src={calculatorBanner}
+          alt="Calculator Banner"
+          className="w-full rounded-lg shadow-md"
         />
       </div>
 
-      {/* FROM UNIT */}
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">From Unit</label>
-        <select
-          value={fromUnit}
-          onChange={(e) => setFromUnit(e.target.value)}
-          className="w-full p-2 border rounded"
-        >
-          <option value="cups">Cups</option>
-          <option value="tbsp">Tablespoons</option>
-          <option value="tsp">Teaspoons</option>
-          <option value="ml">Milliliters</option>
-          <option value="l">Liters</option>
-          <option value="oz">Ounces</option>
-          <option value="g">Grams</option>
-          <option value="kg">Kilograms</option>
-          <option value="fl oz">Fluid Ounces</option>
-          <option value="lb">Pounds</option>
-          <option value="C">Celsius</option>
-          <option value="F">Fahrenheit</option>
-        </select>
-      </div>
+      <div className="bg-[#fffdf7]/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-[#e4d5b8]">
 
-      {/* TO UNIT */}
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">To Unit</label>
-        <select
-          value={toUnit}
-          onChange={(e) => setToUnit(e.target.value)}
-          className="w-full p-2 border rounded"
-        >
-          <option value="grams">Grams</option>
-          <option value="g">Grams (g)</option>
-          <option value="kg">Kilograms</option>
-          <option value="oz">Ounces</option>
-          <option value="cups">Cups</option>
-          <option value="tbsp">Tablespoons</option>
-          <option value="tsp">Teaspoons</option>
-          <option value="ml">Milliliters</option>
-          <option value="l">Liters</option>
-          <option value="fl oz">Fluid Ounces</option>
-          <option value="lb">Pounds</option>
-          <option value="C">Celsius</option>
-          <option value="F">Fahrenheit</option>
-        </select>
-      </div>
+        <h1 className="text-3xl font-bold mb-6 text-center text-[#4b3b2f]">
+          Kitchen Conversion Calculator
+        </h1>
 
-      {/* INGREDIENT */}
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">
-          Ingredient (Optional — required for cups→grams)
-        </label>
-        <input
-          type="text"
-          value={ingredient}
-          onChange={(e) => setIngredient(e.target.value)}
-          placeholder="e.g. flour, sugar, butter…"
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      {/* BUTTON */}
-      <button
-        onClick={smartConvert}
-        disabled={loading}
-        className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition disabled:opacity-50"
-      >
-        {loading ? "Converting…" : "Convert"}
-      </button>
-
-      {/* RESULT */}
-      {result && (
-        <div className="mt-4 p-3 bg-white/70 rounded shadow border">
-          <p className="font-semibold text-lg">{result}</p>
+        {/* Amount */}
+        <div className="mb-4 text-left">
+          <label className="block mb-1 font-semibold text-[#4b3b2f]">Amount</label>
+          <input
+            type="text"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="e.g. 1 1/2"
+            className="w-full p-3 border rounded-xl bg-white shadow-sm"
+          />
         </div>
-      )}
 
-      {/* ERROR */}
-      {error && (
-        <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        {/* From Unit */}
+        <div className="mb-4 text-left">
+          <label className="block mb-1 font-semibold text-[#4b3b2f]">From Unit</label>
+          <select
+            value={fromUnit}
+            onChange={(e) => setFromUnit(e.target.value)}
+            className="w-full p-3 border rounded-xl bg-white shadow-sm"
+          >
+            <option value="cups">Cups</option>
+            <option value="tbsp">Tablespoons</option>
+            <option value="tsp">Teaspoons</option>
+            <option value="ml">Milliliters</option>
+            <option value="l">Liters</option>
+            <option value="oz">Ounces</option>
+            <option value="g">Grams</option>
+            <option value="kg">Kilograms</option>
+            <option value="fl oz">Fluid Ounces</option>
+            <option value="lb">Pounds</option>
+            <option value="C">Celsius</option>
+            <option value="F">Fahrenheit</option>
+          </select>
         </div>
-      )}
+
+        {/* To Unit */}
+        <div className="mb-4 text-left">
+          <label className="block mb-1 font-semibold text-[#4b3b2f]">To Unit</label>
+          <select
+            value={toUnit}
+            onChange={(e) => setToUnit(e.target.value)}
+            className="w-full p-3 border rounded-xl bg-white shadow-sm"
+          >
+            <option value="grams">Grams</option>
+            <option value="g">Grams (g)</option>
+            <option value="kg">Kilograms</option>
+            <option value="oz">Ounces</option>
+            <option value="cups">Cups</option>
+            <option value="tbsp">Tablespoons</option>
+            <option value="tsp">Teaspoons</option>
+            <option value="ml">Milliliters</option>
+            <option value="l">Liters</option>
+            <option value="fl oz">Fluid Ounces</option>
+            <option value="lb">Pounds</option>
+            <option value="C">Celsius</option>
+            <option value="F">Fahrenheit</option>
+          </select>
+        </div>
+
+        {/* Ingredient */}
+        <div className="mb-4 text-left">
+          <label className="block mb-1 font-semibold text-[#4b3b2f]">
+            Ingredient (optional — required for cups→grams)
+          </label>
+          <input
+            type="text"
+            value={ingredient}
+            onChange={(e) => setIngredient(e.target.value)}
+            placeholder="e.g. flour, sugar, butter…"
+            className="w-full p-3 border rounded-xl bg-white shadow-sm"
+          />
+        </div>
+
+        {/* Convert Button */}
+        <button
+          onClick={smartConvert}
+          disabled={loading}
+          className="w-full bg-emerald-700 text-white py-3 rounded-xl shadow-md hover:bg-emerald-800 transition disabled:opacity-50"
+        >
+          {loading ? "Converting…" : "Convert"}
+        </button>
+
+        {/* Result */}
+        {result && (
+          <div className="mt-6 p-4 bg-white/80 rounded-xl shadow flex justify-between items-center border">
+            <p className="font-semibold text-lg text-[#4b3b2f]">{result}</p>
+
+            <button
+              onClick={copyResult}
+              className="px-4 py-2 bg-amber-200 hover:bg-amber-300 rounded-lg shadow text-[#4b3b2f]"
+            >
+              Copy
+            </button>
+          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
+            {error}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

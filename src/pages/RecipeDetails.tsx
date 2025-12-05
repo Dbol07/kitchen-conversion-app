@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DecorativeFrame from "../components/DecorativeFrame";
 import FloralDivider from "../components/FloralDivider";
 
-const API_KEY = "3c88bd7c26584a08a693d48e209665eb";
+const API_KEY = import.meta.env.VITE_SPOONACULAR_KEY;
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -31,6 +31,21 @@ export default function RecipeDetails() {
     if (id) fetchRecipe();
   }, [id]);
 
+  function handleConvertIngredients() {
+    if (!recipe?.extendedIngredients) return;
+
+    const ingredients = recipe.extendedIngredients.map((ing: any) => ing.original);
+
+    navigate(`/recipes/${id}/convert`, {
+      state: {
+        recipeId: id,
+        title: recipe.title,
+        image: recipe.image,
+        ingredients,
+      },
+    });
+  }
+
   if (loading) {
     return (
       <div className="text-center text-white py-20 text-xl">
@@ -50,7 +65,6 @@ export default function RecipeDetails() {
   return (
     <div className="min-h-screen pb-28 page-transition page-bg bg-[#1b302c]/30 px-4 py-6">
       <div className="max-w-3xl mx-auto">
-
         {/* BACK BUTTON */}
         <button
           onClick={() => navigate(-1)}
@@ -86,9 +100,19 @@ export default function RecipeDetails() {
             <FloralDivider variant="mushroom" />
 
             {/* INGREDIENTS */}
-            <h2 className="text-xl font-bold text-[#1b302c] mt-4 mb-2">
-              Ingredients
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-[#1b302c] mt-4 mb-2">
+                Ingredients
+              </h2>
+
+              <button
+                onClick={handleConvertIngredients}
+                className="mt-4 px-4 py-2 bg-emerald-200 hover:bg-emerald-300 text-[#1b302c] rounded-xl shadow"
+              >
+                Convert Ingredients →
+              </button>
+            </div>
+
             <ul className="list-disc list-inside text-[#3c6150] space-y-1">
               {recipe.extendedIngredients?.map((ing: any) => (
                 <li key={ing.id}>{ing.original}</li>
@@ -132,7 +156,9 @@ export default function RecipeDetails() {
                       className="p-3 bg-[#b8d3d5]/20 rounded-xl shadow"
                     >
                       <p className="font-semibold">{nut.name}</p>
-                      <p>{nut.amount} {nut.unit}</p>
+                      <p>
+                        {nut.amount} {nut.unit}
+                      </p>
                     </div>
                   ))}
                 </div>
